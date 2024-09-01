@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisation en Direct des Badges</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visualisation en Direct des Badges</h1>
+    <table id="badgeTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Badge ID</th>
+                <th>Date de Scan</th>
+            </tr>
+        </thead>
+        <tbody id="badgeTableBody">
+            <!-- Les données seront insérées ici -->
+        </tbody>
+    </table>
+
+    <script>
+        function fetchBadgeData() {
+            fetch('http://localhost/rfid_reader/get_badges.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('badgeTableBody');
+                    tableBody.innerHTML = ''; // Effacer le contenu existant
+                    data.forEach(badge => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${badge.id}</td>
+                            <td>${badge.badge_id}</td>
+                            <td>${badge.scan_date}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données:', error));
+        }
+
+        // Mettre à jour les données toutes les secondes
+        setInterval(fetchBadgeData, 1000);
+
+        // Charger les données initiales
+        fetchBadgeData();
+    </script>
+</body>
+</html>
