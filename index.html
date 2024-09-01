@@ -26,13 +26,12 @@
     </style>
 </head>
 <body>
-    <h1>Visualisation en Direct des Badges</h1>
     <table id="badgeTable">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Badge ID</th>
-                <th>Date de Scan</th>
+                <th>Utilisateur</th>
+                <th>Action</th>
+                <th>Date</th>
             </tr>
         </thead>
         <tbody id="badgeTableBody">
@@ -41,6 +40,27 @@
     </table>
 
     <script>
+        function formatDate(dateString) {
+            // Convertir la chaîne de date en objet Date
+            const date = new Date(dateString);
+
+            // Extraire le jour, le mois et l'année
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0, donc ajouter 1
+            const year = date.getFullYear();
+
+            // Extraire les heures et les minutes
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+
+            // Construire la chaîne de date au format souhaité
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+
+        // Exemple d'utilisation
+        const formattedDate = formatDate('2024-09-01 15:45:03');
+        console.log(formattedDate); // Affiche : "01/09/2024 15:45"
+
         function fetchBadgeData() {
             fetch('http://localhost/rfid_reader/get_badges.php')
                 .then(response => response.json())
@@ -50,9 +70,9 @@
                     data.forEach(badge => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${badge.id}</td>
-                            <td>${badge.badge_id}</td>
-                            <td>${badge.scan_date}</td>
+                            <td>${badge.Utilisateur}</td>
+                            <td>${badge.Type_de_Scan === 0 ? 'Entrée' : 'Sortie'}</td>
+                            <td>${formatDate(badge.Date_de_Scan)}</td>
                         `;
                         tableBody.appendChild(row);
                     });

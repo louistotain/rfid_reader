@@ -2,12 +2,12 @@ import requests
 import time
 
 def lire_badge():
-    id_badge = input("ID du badge : ")
-    return id_badge
+    rfid = input("RFID : ")
+    return rfid
 
-def envoyer_badge(api_url, id_badge):
+def envoyer_badge(api_url, rfid):
     try:
-        response = requests.post(api_url, json={"id_badge": id_badge})
+        response = requests.post(api_url, json={"rfid": rfid})
         if response.status_code == 200:
             print("ID de badge envoyé avec succès !")
         else:
@@ -18,6 +18,6 @@ def envoyer_badge(api_url, id_badge):
 if __name__ == "__main__":
     api_url = 'http://localhost/rfid_reader/add_badge.php'
     while True:
-        id_badge = lire_badge()
-        if id_badge:
-            envoyer_badge(api_url, id_badge)
+        rfid = lire_badge()
+        if rfid:
+            envoyer_badge(api_url, rfid)

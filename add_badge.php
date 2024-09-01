@@ -3,24 +3,30 @@ require 'db.php';
 
 header('Content-Type: application/json');
 
-// Vérifier si la méthode est POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Récupérer les données JSON
     $data = json_decode(file_get_contents('php://input'), true);
-    $badge_id = $data['id_badge'] ?? null;
+    $rfid = $data['rfid'] ?? null;
 
-    if ($badge_id) {
-        // Préparer la requête d'insertion
-        $stmt = $pdo->prepare("INSERT INTO scans (badge_id) VALUES (:badge_id)");
-        $stmt->bindParam(':badge_id', $badge_id);
+    if ($rfid) {
+        $stmt = $pdo->prepare("SELECT id FROM badges WHERE rfid = :rfid");
+        $stmt->bindParam(':rfid', $rfid);
+        $stmt->execute();
+        $badge = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($stmt->execute()) {
-            echo json_encode(["message" => "ID de badge ajouté avec succès!", "id_badge" => $badge_id]);
+        if ($badge) {
+            $stmt = $pdo->prepare("INSERT INTO scans (badge_id, scan_date) VALUES (:badge_id, NOW())");
+            $stmt->bindParam(':badge_id', $badge['id']);
+
+            if ($stmt->execute()) {
+                echo json_encode(["message" => "Scan ajouté avec succès!", "badge_id" => $badge['id']]);
+            } else {
+                echo json_encode(["error" => "Erreur lors de l'ajout du scan."]);
+            }
         } else {
-            echo json_encode(["error" => "Erreur lors de l'ajout de l'ID de badge."]);
+            echo json_encode(["error" => "Aucun badge trouvé pour cet RFID."]);
         }
     } else {
-        echo json_encode(["error" => "L'ID du badge est requis."]);
+        echo json_encode(["error" => "RFID et type de scan sont requis."]);
     }
 } else {
     echo json_encode(["error" => "Méthode non autorisée. Utilisez POST."]);
