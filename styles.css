@@ -1,0 +1,186 @@
+@font-face {
+    font-family: 'Ariana Pro Book';
+    font-style: normal;
+    src: url('../fonts/Ariana Pro Book.otf');
+}
+
+@font-face {
+    font-family: 'Ariana Pro Regular';
+    font-style: normal;
+    src: url('../fonts/Ariana Pro Regular.otf');
+}
+
+@font-face {
+    font-family: 'Ariana Pro Medium';
+    font-style: normal;
+    src: url('../fonts/Ariana Pro Medium.otf');
+}
+
+@font-face {
+    font-family: 'Ariana Pro Bold';
+    font-style: normal;
+    src: url('../fonts/Ariana Pro Bold.otf');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Ariana Pro Regular', sans-serif;
+    letter-spacing: 0.08vw;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: #f0f0f0;
+    margin: 0;
+    color: #48494D;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.left-panel {
+    width: 55%;
+    background: linear-gradient(to bottom right, #2888AE, #37B1B9); /* Dégradé mis à jour */
+    padding: 2vw;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7vw;
+    letter-spacing: 0.11vw;
+    line-height: 1.35vw;
+}
+
+.time-display {
+    text-align: center;
+    margin-top: -50px;
+}
+
+.time {
+    letter-spacing: 0.15vw !important;
+    font-family: 'Ariana Pro Bold', sans-serif !important;
+    font-size: 6vw !important;
+    color: white !important;
+}
+
+.date {
+    font-family: 'Ariana Pro Book', sans-serif !important;
+    margin-top: 1vw;
+    font-size: 2.25vw;
+    letter-spacing: 0.11vw;
+    line-height: 1.35vw;
+}
+
+.footer {
+    font-size: 0.7vw;
+    letter-spacing: 0.11vw;
+    line-height: 1.35vw;
+    text-align: center;
+}
+
+.footer a {
+    color: white;
+    text-decoration: underline;
+    font-weight: 400;
+}
+
+.right-panel {
+    width: 45%;
+    background-color: white;
+    padding: 2vw 5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.search-bar {
+    width: 100%;
+    padding: .5vw 1vw;
+    font-size: 0.7vw;
+    letter-spacing: 0.11vw;
+    line-height: 1.35vw;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    background: #F7F8F9;
+}
+
+.search-bar::placeholder {
+   color: #8D9196;
+}
+
+.user-list {
+    list-style: none;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    margin-top: 2vw;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(to bottom right, #2888AE, #37B1B9);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Ariana Pro Medium', sans-serif !important;
+    font-size: .8vw;
+    letter-spacing: 0.11vw;
+    line-height: 1.35vw;
+    margin-right: 15px;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.name {
+    font-family: 'Ariana Pro Medium', sans-serif !important;
+    font-size: 18px;
+    margin-bottom: 2px;
+}
+
+.status {
+    margin-right: 1vw;
+    font-size: 14px;
+    color: #8D9196;
+}
+
+.time2 {
+    font-family: 'Ariana Pro Medium', sans-serif !important;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.online {
+    background-color: #BBE865;
+}
+
+.offline {
+    background-color: #D6684D;
+}

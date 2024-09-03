@@ -1,90 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualisation en Direct des Badges</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pointeuse en ligne</title>
+	<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <table id="badgeTable">
-        <thead>
-            <tr>
-                <th>Utilisateur</th>
-                <th>Action</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody id="badgeTableBody">
-            <!-- Les données seront insérées ici -->
-        </tbody>
-    </table>
+<div class="container">
+	<div class="left-panel">
+		<div class="header">
+			<span>Pointeuse en ligne</span>
+			<span>copyright © 2024 Tremblaye solution</span>
+		</div>
+		<div class="time-display">
+			<div class="time">
+				<!-- Les éléments générés dynamiquement -->
+			</div>
+			<div class="date">
+				<!-- Les éléments générés dynamiquement -->
+			</div>
+		</div>
+		<div class="footer">
+			<span>Badge RFID ou utiliser <a href="#">son code</a></span>
+		</div>
+	</div>
+	<div class="right-panel">
+		<input type="text" placeholder="Rechercher..." class="search-bar">
+		<ul class="user-list" id="user-list">
+			<!-- Les éléments générés dynamiquement -->
+		</ul>
+	</div>
+</div>
 
-    <script>
-        function formatDate(dateString) {
-            // Convertir la chaîne de date en objet Date
-            const date = new Date(dateString);
+<script>
+	
+	// ----- Horaires
+	
+	function updateTimeAndDate() {
+		const timeElement = document.querySelector('.time');
+		const dateElement = document.querySelector('.date');
+		
+		const now = new Date();
+		
+		// Format de l'heure
+		const hours = String(now.getHours()).padStart(2, '0');
+		const minutes = String(now.getMinutes()).padStart(2, '0');
+		const timeString = `${hours}:${minutes}`;
+		
+		// Format de la date
+		const day = now.getDate();
+		const monthNames = [
+			'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+			'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+		];
+		const month = monthNames[now.getMonth()];
+		const year = now.getFullYear();
+		const dateString = `${day} ${month} ${year}`;
+		
+		// Met à jour le contenu des éléments HTML
+		timeElement.textContent = timeString;
+		dateElement.textContent = dateString;
+	}
+	
+	// Met à jour l'heure et la date immédiatement au chargement
+	updateTimeAndDate();
+	
+	// Met à jour l'heure et la date toutes les minutes
+	setInterval(updateTimeAndDate, 60000);
+	
+	
+	
+	// ----- API users
+	
+	async function fetchUserData() {
+		try {
+			const response = await fetch('http://timeclock/get_badges.php');
+			const data = await response.json();
+			updateUserList(data);
+		} catch (error) {
+			console.error('Erreur lors de la récupération des données:', error);
+		}
+	}
+	
+	function updateUserList(data) {
+		const userList = document.getElementById('user-list');
+		userList.innerHTML = ''; // Vider la liste pour la mettre à jour
+		
+		// Obtenir la liste unique des utilisateurs et leurs dernières actions
+		const users = {};
+		data.forEach(item => {
+			const name = item.Utilisateur;
+			if (!users[name] || new Date(item.Date_de_Scan) > new Date(users[name].Date_de_Scan)) {
+				users[name] = item;
+			}
+		});
+		
+		// Créer les éléments de la liste
+		for (const user in users) {
+			const item = users[user];
+			const listItem = document.createElement('li');
+			listItem.className = 'user-item';
+			
+			// Extraire les initiales de l'utilisateur
+			const initials = item.Utilisateur.split(' ').map(n => n[0]).join('').toUpperCase();
+			
+			// Créer les éléments de l'utilisateur
+			listItem.innerHTML = `
+            <div class="avatar">${initials}</div>
+            <div class="user-info">
+                <span class="name">${item.Utilisateur}</span>
+            </div>
+            <span class="status">${item.Action === 0 ? 'Disponible' : 'Non disponible'}</span>
+            <div class="time2">${formatTime(item.Date_de_Scan)}</div>
+            <div class="status-indicator ${item.Action === 0 ? 'online' : 'offline'}"></div>
+        `;
+			
+			userList.appendChild(listItem);
+		}
+	}
+	
+	function formatTime(dateTime) {
+		const date = new Date(dateTime);
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		return `${hours}:${minutes}`;
+	}
+	
+	// Appeler la fonction pour récupérer et afficher les données toutes les secondes
+	fetchUserData();
+	setInterval(fetchUserData, 1000); // Exécuter fetchUserData toutes les secondes (1000 ms)
 
-            // Extraire le jour, le mois et l'année
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Les mois commencent à 0, donc ajouter 1
-            const year = date.getFullYear();
+</script>
 
-            // Extraire les heures et les minutes
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-
-            // Construire la chaîne de date au format souhaité
-            return `${day}/${month}/${year} ${hours}:${minutes}`;
-        }
-
-        // Exemple d'utilisation
-        const formattedDate = formatDate('2024-09-01 15:45:03');
-        console.log(formattedDate); // Affiche : "01/09/2024 15:45"
-
-        function fetchBadgeData() {
-            fetch('http://localhost/rfid_reader/get_badges.php')
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('badgeTableBody');
-                    tableBody.innerHTML = ''; // Effacer le contenu existant
-                    data.forEach(badge => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${badge.Utilisateur}</td>
-                            <td>${badge.Type_de_Scan === 0 ? 'Entrée' : 'Sortie'}</td>
-                            <td>${formatDate(badge.Date_de_Scan)}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Erreur lors de la récupération des données:', error));
-        }
-
-        // Mettre à jour les données toutes les secondes
-        setInterval(fetchBadgeData, 1000);
-
-        // Charger les données initiales
-        fetchBadgeData();
-    </script>
 </body>
 </html>

@@ -16,7 +16,7 @@ def envoyer_badge(api_url, rfid):
         print(f"Erreur de connexion à l'API : {e}")
 
 if __name__ == "__main__":
-    api_url = 'http://localhost/rfid_reader/add_badge.php'
+    api_url = 'http://timeclock/add_badge.php'
     while True:
         rfid = lire_badge()
         if rfid:
